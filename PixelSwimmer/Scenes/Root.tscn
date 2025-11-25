@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://byoikuyfq74cj"]
+[gd_scene load_steps=21 format=3 uid="uid://byoikuyfq74cj"]
 
 [ext_resource type="Script" uid="uid://c12vti6022ji0" path="res://Scripts/Root.gd" id="1_difym"]
 [ext_resource type="PackedScene" uid="uid://djwlm556wwhom" path="res://Scenes/Enemy Scenes/BossMinion.tscn" id="3_yiytj"]
@@ -15,7 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://bnjwk32m2suwc" path="res://Scenes/UI Scenes/hud.tscn" id="15_ijev8"]
 [ext_resource type="Texture2D" uid="uid://bgvie58h567jd" path="res://Assets/Menu Buttons/Pause BUTTON (not Hovered).png" id="16_path1"]
 [ext_resource type="PackedScene" uid="uid://b42o5vtp8dpl2" path="res://Scenes/Menu Scenes/LevelFailedScreen.tscn" id="17_626no"]
-[ext_resource type="Texture2D" uid="uid://dgwpep3vmh6sf" path="res://Assets/Menu Buttons/Pause BUTTON (Hovered).png" id="17_okppc"]
 [ext_resource type="PackedScene" uid="uid://ctmnc8vem7jt0" path="res://Scenes/Menu Scenes/pause_menu.tscn" id="18_0dy5o"]
 [ext_resource type="PackedScene" uid="uid://duxr3xb44n25m" path="res://Scenes/Menu Scenes/Chapters/ChapterCompleteScreen.tscn" id="18_6ebx2"]
 [ext_resource type="PackedScene" uid="uid://dcen0c2824kuh" path="res://Scenes/Menu Scenes/game_over_screen.tscn" id="19_7j4pg"]
@@ -120,16 +119,11 @@ anchor_right = 0.5
 anchor_bottom = 0.0
 grow_vertical = 1
 
-[node name="PauseButton" type="TextureButton" parent="UILayer/HUD" groups=["player"]]
+[node name="PauseButton" type="TouchScreenButton" parent="UILayer/HUD" groups=["player"]]
 z_index = 12
-layout_mode = 0
-offset_left = 208.0
-offset_top = 0.99999964
-offset_right = 308.0
-offset_bottom = 101.0
+position = Vector2(208, 1)
 scale = Vector2(0.5843101, 0.61272013)
 texture_normal = ExtResource("16_path1")
-texture_hover = ExtResource("17_okppc")
 
 [node name="LevelLabel" type="Label" parent="UILayer/HUD"]
 layout_mode = 1

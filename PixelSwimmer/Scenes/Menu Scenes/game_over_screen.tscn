@@ -1,10 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://dcen0c2824kuh"]
+[gd_scene load_steps=9 format=3 uid="uid://dcen0c2824kuh"]
 
 [ext_resource type="Script" uid="uid://dr3c8q1wbqbm4" path="res://Scripts/Menu Scripts/game_over_screen.gd" id="1_e5yba"]
 [ext_resource type="Texture2D" uid="uid://4l08p5pi7edm" path="res://Assets/Backgrounds/CERVIX SPERM GAME BACKGROUND V3.png" id="1_jb6in"]
 [ext_resource type="FontFile" uid="uid://dyavrxg7xjiev" path="res://Assets/Fonts/Daydream DEMO.otf" id="2_y8man"]
 [ext_resource type="Texture2D" uid="uid://dkhuptp7tvi6j" path="res://Assets/Menu Buttons/Try Again BUTTON (not hovered).png" id="4_ladg1"]
-[ext_resource type="Texture2D" uid="uid://1gplfkt64hqq" path="res://Assets/Menu Buttons/Try Again BUTTON (hovered).png" id="5_e5yba"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wydum"]
 bg_color = Color(0.84313726, 0.27450982, 0.41960785, 1)
@@ -122,14 +121,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="TextureButton" type="TextureButton" parent="Panel"]
-layout_mode = 0
-offset_left = 4.454544
-offset_top = 26.0
-offset_right = 304.45453
-offset_bottom = 126.0
+[node name="TextureButton" type="TouchScreenButton" parent="Panel"]
+position = Vector2(4.5, 26)
 scale = Vector2(0.12, 0.1)
 texture_normal = ExtResource("4_ladg1")
-texture_hover = ExtResource("5_e5yba")
 
 [connection signal="pressed" from="Panel/TextureButton" to="." method="_on_texture_button_pressed"]
