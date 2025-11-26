@@ -23,6 +23,7 @@ extends Node2D
 @onready var level_completed_screen: Node2D = $UILayer/LevelCompletedScreen
 @onready var kill_label = $UILayer/HUD/KillLabel
 
+
 # SFX
 @onready var player_shooting_sound = $SFX/PlayerShooting
 @onready var player_hit_sound = $SFX/PlayerHit
@@ -60,9 +61,9 @@ var levels = [
 	{"EnemySperm":5, "MucusEnemy": 5, "ExplodingEnemy": 20, "WhiteCell": 15, "Parasite": 15, "Egg": 1, "RequiredKills": 60}, #Lvl 6
 	{"EnemySperm":5, "MucusEnemy": 5, "ExplodingEnemy": 20, "WhiteCell": 20, "Parasite": 20, "BossMinion": 5, "Egg": 1, "RequiredKills": 90}, #Lvl 7
 	{"EnemySperm":5, "MucusEnemy": 5, "ExplodingEnemy": 20, "WhiteCell": 10, "Parasite": 10, "BossMinion": 10, "Egg": 1, "RequiredKills": 50}, #Lvl 8
-	{"EnemySperm":5, "MucusEnemy": 5, "ExplodingEnemy": 20, "WhiteCell": 10, "Parasite": 10, "BossMinion": 15, "Egg": 1, "RequiredKills": 55}, #Lvl 9
+	{"EnemySperm":5, "MucusEnemy": 5, "ExplodingEnemy": 20, "WhiteCell": 10, "Parasite": 10, "BossMinion": 15, "Egg": 1, "RequiredKills": 55}, #Lvl 8
 	{"Boss": 1,"Egg": 1} #BossLevel
-]
+	]
 var enemy_spawn_queue = []
 var enemy_queue_index = 0
 var minion: Node = null  # track current minion instance
@@ -142,6 +143,7 @@ func _ready() -> void:
 	pause_menu.quit_pressed.connect(_quit_game)
 
 	player.global_position = player_spawn.global_position
+
 
 	# ---------- SAVE LOADING FIXED HERE ----------
 	var save_file = FileAccess.open("user://save.data", FileAccess.READ)
@@ -310,8 +312,7 @@ func _on_enemy_killed(points, death_sound, source):
 
 	if score > high_score:
 		high_score = score
-
-
+		
 func _on_enemy_hit():
 	enemy_hit_sound.play()
 
@@ -482,7 +483,7 @@ func _on_boss_spawn_minions(count: int, boss: Boss) -> void:
 
 func _on_boss_minion_killed(points, death_sound, source, boss: Boss) -> void:
 	# still let your normal kill logic run if you want:
-	_on_enemy_killed(points, death_sound, source,)
+	_on_enemy_killed(points, death_sound, source)
 
 	if is_instance_valid(boss):
 		boss.on_minion_died()
@@ -515,7 +516,7 @@ func start_game(mode, current_level):
 
 	is_boss_level = level_data.has("Boss")
 	boss_dead = not is_boss_level
-
+	
 	if is_boss_level:
 		$UILayer/HUD/KillLabel.visible = false
 	else:

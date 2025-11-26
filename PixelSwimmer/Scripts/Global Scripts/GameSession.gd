@@ -10,7 +10,6 @@ var highest_unlocked_chapter: int = 0
 func _ready():
 	load_save()
 
-
 func load_save():
 	var save_file = FileAccess.open("user://save.data", FileAccess.READ)
 

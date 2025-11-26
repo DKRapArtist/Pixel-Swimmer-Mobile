@@ -384,9 +384,11 @@ script = ExtResource("1_28flt")
 
 [node name="Background" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="CervixMenuBackgroundBlurred" type="Sprite2D" parent="Background"]
 z_index = -1
@@ -423,29 +425,55 @@ offset_top = 45.0
 offset_right = 127.0
 offset_bottom = 85.0
 
-[node name="Survival" type="TouchScreenButton" parent="Buttons"]
-position = Vector2(-18, 280)
+[node name="Survival" type="TextureButton" parent="Buttons"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -2.1750002
+anchor_top = -1.1500001
+anchor_right = -2.1750002
+anchor_bottom = -1.1500001
+offset_left = 69.00001
+offset_top = 326.0
+offset_right = 383.0
+offset_bottom = 450.00006
 scale = Vector2(1.337, 1.337)
 texture_normal = ExtResource("5_vh5po")
-texture_pressed = ExtResource("7_rrnp0")
+texture_hover = ExtResource("7_rrnp0")
 
-[node name="StoryMode" type="TouchScreenButton" parent="Buttons"]
-position = Vector2(-18, 427)
+[node name="StoryMode" type="TextureButton" parent="Buttons"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -2.1750002
+anchor_top = -1.1500001
+anchor_right = -2.1750002
+anchor_bottom = -1.1500001
+offset_left = 69.00001
+offset_top = 473.0
+offset_right = 383.0
+offset_bottom = 597.00006
 scale = Vector2(1.337, 1.337)
 texture_normal = ExtResource("8_hulit")
-texture_pressed = ExtResource("9_q0l6w")
+texture_hover = ExtResource("9_q0l6w")
 
-[node name="Options" type="TouchScreenButton" parent="Buttons"]
-position = Vector2(-18, 574)
+[node name="Options" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = -18.0
+offset_top = 574.0
+offset_right = 282.0
+offset_bottom = 674.0
 scale = Vector2(1.337, 1.337)
 texture_normal = ExtResource("3_n45e2")
-texture_pressed = ExtResource("5_yhxw7")
+texture_hover = ExtResource("5_yhxw7")
 
-[node name="Quit" type="TouchScreenButton" parent="Buttons"]
-position = Vector2(-18, 721)
+[node name="Quit" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = -18.0
+offset_top = 721.0
+offset_right = 282.0
+offset_bottom = 833.2908
 scale = Vector2(1.337, 1.337)
 texture_normal = ExtResource("4_opfnp")
-texture_pressed = ExtResource("7_trj04")
+texture_hover = ExtResource("7_trj04")
 
 [connection signal="pressed" from="Buttons/Survival" to="." method="_on_survival_pressed"]
 [connection signal="pressed" from="Buttons/StoryMode" to="." method="_on_story_mode_pressed"]

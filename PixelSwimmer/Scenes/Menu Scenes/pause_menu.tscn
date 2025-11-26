@@ -1,10 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://ctmnc8vem7jt0"]
+[gd_scene load_steps=13 format=3 uid="uid://ctmnc8vem7jt0"]
 
 [ext_resource type="Script" uid="uid://hoyf36n0mgmh" path="res://Scripts/Menu Scripts/pause_menu.gd" id="1_u8tnp"]
 [ext_resource type="Texture2D" uid="uid://c2m3q2qnmymm6" path="res://Assets/Menu Buttons/Resume BUTTON (not hovered).png" id="2_sjs17"]
+[ext_resource type="Texture2D" uid="uid://uqoxqa0tihrq" path="res://Assets/Menu Buttons/Resume BUTTON (hovered).png" id="3_u8tnp"]
 [ext_resource type="Texture2D" uid="uid://bgubsp0bxq0sc" path="res://Assets/Menu Buttons/Main Menu BUTTON (not hovered).png" id="4_stj27"]
+[ext_resource type="Texture2D" uid="uid://b1pjvq5dsh12y" path="res://Assets/Menu Buttons/Main Menu BUTTON (hovered).png" id="5_ix48p"]
 [ext_resource type="Texture2D" uid="uid://dhfqr2yoib7c6" path="res://Assets/Menu Buttons/Quit BUTTON (not hovered).png" id="6_524vl"]
 [ext_resource type="Texture2D" uid="uid://crwkkhbg55f28" path="res://Assets/Menu Buttons/Options BUTTON (not hovered).png" id="6_ix48p"]
+[ext_resource type="Texture2D" uid="uid://1npnqh3y7n8h" path="res://Assets/Menu Buttons/Quit BUTTON (hovered).png" id="7_0fi7f"]
+[ext_resource type="Texture2D" uid="uid://6sry21sva7s7" path="res://Assets/Menu Buttons/Options BUTTON (hovered).png" id="7_524vl"]
 [ext_resource type="Texture2D" uid="uid://4l08p5pi7edm" path="res://Assets/Backgrounds/CERVIX SPERM GAME BACKGROUND V3.png" id="11_0fi7f"]
 [ext_resource type="Texture2D" uid="uid://cs3g6fg0ouefh" path="res://Assets/Menu Buttons/PAUSE TEXT.png" id="12_0fi7f"]
 [ext_resource type="PackedScene" uid="uid://cghi1x1nngvw8" path="res://Scenes/Menu Scenes/options.tscn" id="13_uscpe"]
@@ -27,21 +31,29 @@ offset_right = 401.0
 offset_bottom = 658.0
 scale = Vector2(1.2562219, 1.2753611)
 
-[node name="Resume" type="TouchScreenButton" parent="Pause/VBoxContainer"]
-position = Vector2(22, 0)
+[node name="Resume" type="TextureButton" parent="Pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 texture_normal = ExtResource("2_sjs17")
+texture_hover = ExtResource("3_u8tnp")
 
-[node name="Main Menu" type="TouchScreenButton" parent="Pause/VBoxContainer"]
-position = Vector2(22, 104)
+[node name="Main Menu" type="TextureButton" parent="Pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 texture_normal = ExtResource("4_stj27")
+texture_hover = ExtResource("5_ix48p")
 
-[node name="Options" type="TouchScreenButton" parent="Pause/VBoxContainer"]
-position = Vector2(22, 208)
+[node name="Options" type="TextureButton" parent="Pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 texture_normal = ExtResource("6_ix48p")
+texture_hover = ExtResource("7_524vl")
 
-[node name="Quit" type="TouchScreenButton" parent="Pause/VBoxContainer"]
-position = Vector2(22, 312)
+[node name="Quit" type="TextureButton" parent="Pause/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
 texture_normal = ExtResource("6_524vl")
+texture_hover = ExtResource("7_0fi7f")
 
 [node name="PauseText" type="Sprite2D" parent="Pause"]
 position = Vector2(269.00003, 220.00002)

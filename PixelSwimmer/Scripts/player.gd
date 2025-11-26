@@ -10,21 +10,32 @@ signal hit
 signal levelcompleted
 
 # ───────────────────────────────────────────────
-#Variables
+# MOBILE INPUT
+# ───────────────────────────────────────────────
+@export var drag_threshold: float = 8.0          # how far you must move before it's a drag
+@export var shoot_cooldown: float = 0.12         # seconds between shots
+
+var touch_start_pos: Vector2 = Vector2.ZERO
+var is_dragging: bool = false
+var touch_was_movement: bool = false
+var move_direction: Vector2 = Vector2.ZERO
+var last_shot_time: float = 0.0
+var finger_pos: Vector2 = Vector2.ZERO
+
+# ───────────────────────────────────────────────
+# Export variables
 # ───────────────────────────────────────────────
 @export var SPEED := 300.0
 @export var SHOOT_MULTIPLIER := 1.3
 @export var margin := 32
 
-#laser variables
+# Laser variables
 @export var base_laser_damage = 1
 var laser_damage_multiplier := 1.0
-var laser_scene := preload("res://Scenes/Laser Scenes/laser.tscn")
+var laser_scene := preload("res://Scenes/Laser Scenes/Laser.tscn")
 @export var damage_buff_laser_scene := preload("res://Scenes/Laser Scenes/DamageBuffLaser.tscn")
 
-
 var buff_active = false
-# Slow effect
 var is_slowed := false
 
 # HP + UI
@@ -35,7 +46,7 @@ var red_hearts_list: Array[TextureRect] = []
 var black_hearts_list: Array[TextureRect] = []
 var blue_hearts_list: Array[TextureRect] = []
 
-#player buff defaults
+# Player buff defaults
 var can_heal: bool = true
 var is_poisoned: bool = false
 var has_shield: bool = false
@@ -53,6 +64,91 @@ var level_completed: bool = false
 @onready var blue_hearts := $health_bar/BlueHearts
 @onready var damage_sfx := $TakeDamage
 @onready var low_health_sfx := $LowHealth
+
+# ───────────────────────────────────────────────
+# MOBILE INPUT
+# ───────────────────────────────────────────────
+func _input(event):
+	# TOUCH START
+	if event is InputEventScreenTouch and event.pressed:
+		touch_start_pos = event.position
+		is_dragging = true
+		touch_was_movement = false
+		move_direction = Vector2.ZERO
+
+	# DRAG → MOVEMENT
+	elif event is InputEventScreenDrag and is_dragging:
+		var drag_vector: Vector2 = event.position - touch_start_pos
+
+		# Only treat as movement if we move far enough
+		if drag_vector.length() > drag_threshold:
+			touch_was_movement = true
+			finger_pos = event.position
+
+	# TOUCH RELEASE → POSSIBLE TAP / SHOOT
+	elif event is InputEventScreenTouch and not event.pressed:
+		is_dragging = false
+		move_direction = Vector2.ZERO
+
+		# If this touch wasn't a movement, treat it as a tap
+		if not touch_was_movement:
+			var now: float = Time.get_ticks_msec() / 1000.0
+			if now - last_shot_time >= shoot_cooldown:
+				shoot()
+				last_shot_time = now
+
+# ───────────────────────────────────────────────
+# MOVEMENT
+# ───────────────────────────────────────────────
+func _physics_process(delta):
+	# Smooth movement while dragging
+	if is_dragging:
+		var to_finger: Vector2 = finger_pos - global_position
+		velocity = to_finger * 10 #adjusts dragging sensitivity
+	else:
+		# friction / slow down when not dragging
+		velocity = velocity.move_toward(Vector2.ZERO, SPEED * delta)
+
+	move_and_slide()
+
+	# Clamp AFTER move_and_slide so we keep collisions
+	var screen_size: Vector2 = get_viewport_rect().size
+	var half_height: float = screen_size.y * 0.5
+
+	global_position.x = clamp(global_position.x, margin, screen_size.x - margin)
+	global_position.y = clamp(global_position.y, half_height + margin, screen_size.y - margin)
+
+# ───────────────────────────────────────────────
+# SHOOTING
+# ───────────────────────────────────────────────
+func shoot():
+	var location: Vector2 = muzzle.global_position
+
+	var scene_to_fire = laser_scene
+	if has_damage_buff:
+		scene_to_fire = damage_buff_laser_scene
+
+	laser_shot.emit(scene_to_fire, location, self)
+
+func _process(delta):
+	# OPTIONAL: keyboard shooting for PC (KEEP DISABLED FOR MOBILE)
+	# if Input.is_action_just_pressed("shoot"):
+	# 	shoot()
+
+	# Shield timer
+	if has_shield:
+		shield_time_left -= delta
+		if shield_time_left <= 0.0:
+			shield_time_left = 0.0
+			has_shield = false
+			update_heart_display()
+
+	# Damage buff timer
+	if has_damage_buff:
+		damage_time_left -= delta
+		if damage_time_left <= 0.0:
+			damage_time_left = 0.0
+			has_damage_buff = false
 
 # ───────────────────────────────────────────────
 # READY
@@ -107,13 +203,13 @@ func update_heart_display():
 			red_hearts_list[i].visible = false
 			blue_hearts_list[i].visible = false
 
-		else: 
+		else:
 			# Show red hearts
 			red_hearts_list[i].visible = i < hp
 			black_hearts_list[i].visible = false
 			blue_hearts_list[i].visible = false
 
-# Play low HP alert
+# Low HP alert
 func low_health_alert():
 	if hp == 1:
 		if low_health_sfx and not low_health_sfx.is_playing():
@@ -123,71 +219,12 @@ func low_health_alert():
 			low_health_sfx.stop()
 
 # ───────────────────────────────────────────────
-# SHOOTING
-# ───────────────────────────────────────────────
-func _process(delta):
-	if Input.is_action_just_pressed("shoot"):
-		shoot()
-		
-	if has_shield:
-		shield_time_left -= delta
-	if shield_time_left <= 0.0:
-		shield_time_left = 0.0
-		has_shield = false
-		update_heart_display()
-
-	if has_damage_buff:
-		damage_time_left -= delta
-	if damage_time_left <= 0.0:
-		damage_time_left = 0.0
-		has_damage_buff = false
-
-func shoot():
-	var location = muzzle.global_position
-	
-	var scene_to_fire = laser_scene
-	if has_damage_buff:
-		scene_to_fire = damage_buff_laser_scene
-	
-	laser_shot.emit(scene_to_fire, location, self)
-
-func apply_damage_buff(duration):
-	if has_damage_buff:
-		return
-	has_damage_buff = true
-	damage_time_left = duration
-# ───────────────────────────────────────────────
-# MOVEMENT + CLAMP
-# ───────────────────────────────────────────────
-func _physics_process(_delta):
-	var x := Input.get_axis("move_left", "move_right")
-	var y := Input.get_axis("move_up", "move_down")
-	var direction := Vector2(x, y)
-
-	# Horizontal movement
-	if direction != Vector2.ZERO:
-		velocity = direction * SPEED * SHOOT_MULTIPLIER
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.y = move_toward(velocity.y, 0, SPEED)
-
-	move_and_slide()
-
-	# Clamp AFTER move_and_slide, not before
-	var screen_size = get_viewport_rect().size
-	var half_height = screen_size.y * 0.5
-	
-	global_position.x = clamp(global_position.x, margin, screen_size.x - margin)
-	global_position.y = clamp(global_position.y, half_height + margin, screen_size.y - margin)
-	
-
-# ───────────────────────────────────────────────
 # DAMAGE + DEATH
 # ───────────────────────────────────────────────
 func take_damage(amount: int):
 	if has_shield:
 		return
-		
+
 	hp -= amount
 	if hp < 0:
 		hp = 0
@@ -206,12 +243,11 @@ func die():
 	killed.emit()
 	queue_free()
 
-#Healing
+# Healing
 func heal(amount: int):
-	#this makes it so NOTHING can heal the player when can_heal is set to false
 	if is_poisoned:
 		return
-		
+
 	hp = clamp(hp + amount, 0, max_hp)
 	update_heart_display()
 	low_health_alert()
@@ -232,16 +268,23 @@ func apply_shield(duration):
 	has_shield = true
 	shield_time_left = duration
 	update_heart_display()
-	
+
+func apply_damage_buff(duration):
+	if has_damage_buff:
+		return
+	has_damage_buff = true
+	damage_time_left = duration
+
 func completed_level():
 	level_completed = true
 	emit_signal("levelcompleted")
+
 # ───────────────────────────────────────────────
 # COLLISION WITH ENEMY
 # ───────────────────────────────────────────────
 func _on_body_entered(body):
 	if body is Enemy:
-		body.take_damage(1, self)  # Pass the correct source!
+		body.take_damage(1, self)
 		take_damage(1)
 
 func _on_hit() -> void:
