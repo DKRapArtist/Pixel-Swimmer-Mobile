@@ -25,10 +25,11 @@ func open_from_main():
 
 func _on_back_pressed():
 	SettingsManager.save_settings()
+	Input.vibrate_handheld(40, 0.3)
 	if origin == "pause_menu":
 		visible = false  # just hide, don't free
 	else:
-		get_tree().change_scene_to_file("res://Scenes/Menu Scenes/main_menu.tscn")
+		SceneHelper._deferred_change_scene.call_deferred("res://Scenes/Menu Scenes/main_menu.tscn")
 
 func _on_volume_value_changed(value: float):
 	SettingsManager.master_volume_db = value

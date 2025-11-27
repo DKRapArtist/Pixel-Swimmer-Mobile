@@ -12,8 +12,10 @@ signal levelcompleted
 # ───────────────────────────────────────────────
 # MOBILE INPUT
 # ───────────────────────────────────────────────
-@export var drag_threshold: float = 8.0          # how far you must move before it's a drag
+@export var drag_threshold: float = 8          # how far you must move before it's a drag
 @export var shoot_cooldown: float = 0.12         # seconds between shots
+@export var max_drag_distance: float = 120
+@export var follow_strength: float = 10
 
 var touch_start_pos: Vector2 = Vector2.ZERO
 var is_dragging: bool = false
@@ -21,6 +23,7 @@ var touch_was_movement: bool = false
 var move_direction: Vector2 = Vector2.ZERO
 var last_shot_time: float = 0.0
 var finger_pos: Vector2 = Vector2.ZERO
+var speed_multiplyer = 1.0
 
 # ───────────────────────────────────────────────
 # Export variables
@@ -80,7 +83,6 @@ func _input(event):
 	elif event is InputEventScreenDrag and is_dragging:
 		var drag_vector: Vector2 = event.position - touch_start_pos
 
-		# Only treat as movement if we move far enough
 		if drag_vector.length() > drag_threshold:
 			touch_was_movement = true
 			finger_pos = event.position
@@ -89,6 +91,7 @@ func _input(event):
 	elif event is InputEventScreenTouch and not event.pressed:
 		is_dragging = false
 		move_direction = Vector2.ZERO
+		velocity = Vector2.ZERO
 
 		# If this touch wasn't a movement, treat it as a tap
 		if not touch_was_movement:
@@ -104,7 +107,15 @@ func _physics_process(delta):
 	# Smooth movement while dragging
 	if is_dragging:
 		var to_finger: Vector2 = finger_pos - global_position
-		velocity = to_finger * 10 #adjusts dragging sensitivity
+
+	# ✅ Clamp how far the player can be "pulled"
+		var distance := to_finger.length()
+		if distance > max_drag_distance:
+			to_finger = to_finger.normalized() * max_drag_distance
+
+		velocity = to_finger * follow_strength * speed_multiplyer
+
+
 	else:
 		# friction / slow down when not dragging
 		velocity = velocity.move_toward(Vector2.ZERO, SPEED * delta)
@@ -178,12 +189,12 @@ func apply_slow(amount: float, duration: float):
 		return
 
 	is_slowed = true
-	SPEED *= amount
+	speed_multiplyer *= amount
 
 	var timer := get_tree().create_timer(duration)
 	timer.timeout.connect(func():
 		if is_instance_valid(self):
-			SPEED /= amount
+			speed_multiplyer /= amount
 			is_slowed = false)
 
 # ───────────────────────────────────────────────
